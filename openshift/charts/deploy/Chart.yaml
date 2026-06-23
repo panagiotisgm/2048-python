@@ -1,0 +1,17 @@
+# ── openshift/charts/deploy/Chart.yaml ────────────────────────────────────────
+# Deploy chart — the actual deployable chart for all environments.
+# Depends on the common library chart for shared helpers.
+# ──────────────────────────────────────────────────────────────────────────────
+
+apiVersion: v2
+name: 2048-python
+description: 2048 game python — FastAPI + AI hint
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+
+dependencies:
+  # Pull in shared helpers from the common library chart
+  - name: common
+    version: "0.1.0"
+    repository: "file://../common"   # local reference — no external chart repo needed

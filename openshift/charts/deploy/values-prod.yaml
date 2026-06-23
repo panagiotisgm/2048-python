@@ -1,0 +1,21 @@
+# ── openshift/charts/deploy/values-prod.yaml ──────────────────────────────────
+# Prod — 3 replicas, full resources, PDB enabled
+# ImageStream stable tag used: :prod-stable
+# ──────────────────────────────────────────────────────────────────────────────
+
+replicaCount: 3
+
+resources:
+  requests:
+    cpu: "500m"
+    memory: "512Mi"
+  limits:
+    cpu: "1000m"
+    memory: "1Gi"
+
+route:
+  host: 2048.example.com
+
+pdb:
+  enabled: true
+  minAvailable: 2

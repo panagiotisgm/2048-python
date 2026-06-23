@@ -1,0 +1,10 @@
+# ── openshift/charts/common/Chart.yaml ────────────────────────────────────────
+# Common chart — shared helpers and templates used by the deploy chart.
+# Not deployed on its own. Referenced as a dependency in deploy/Chart.yaml.
+# ──────────────────────────────────────────────────────────────────────────────
+
+apiVersion: v2
+name: common
+description: Shared Helm helpers and label templates for all 2048 services
+type: library            # library chart — cannot be deployed standalone
+version: 0.1.0

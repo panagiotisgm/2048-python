@@ -1,0 +1,36 @@
+# ── openshift/charts/build/imagestream.yaml ───────────────────────────────────
+# ImageStream — lives in dev namespace, single source of truth for all image tags.
+#
+# Promotion flow:
+#   S2I build → :latest → :dev-stable → :preprod-stable → :prod-stable
+#
+# Each stable tag is set by the pipeline only after a successful rollout.
+# ──────────────────────────────────────────────────────────────────────────────
+
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  name: 2048-python
+  namespace: 2048-dev
+  labels:
+    app: 2048-python
+    team: platform
+spec:
+  lookupPolicy:
+    local: true   # allows other namespaces to reference this ImageStream by name
+  tags:
+    - name: latest
+      annotations:
+        description: "Built by S2I on every commit — not yet validated"
+
+    - name: dev-stable
+      annotations:
+        description: "Last image successfully deployed to dev"
+
+    - name: preprod-stable
+      annotations:
+        description: "Last image successfully deployed to preprod"
+
+    - name: prod-stable
+      annotations:
+        description: "Last image successfully deployed to prod"

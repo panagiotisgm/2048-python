@@ -1,0 +1,42 @@
+# ── openshift/charts/deploy/values.yaml ───────────────────────────────────────
+# Base defaults — shared across all environments.
+# Each values-<env>.yaml overrides only what differs.
+# ──────────────────────────────────────────────────────────────────────────────
+
+image:
+  repository: artifactory.example.com/2048-backend
+  tag: latest         # should be overriden by pipeline
+  pullPolicy: Always
+
+replicaCount: 1
+
+service:
+  port: 80
+  targetPort: 8000
+
+## 
+resources:
+  requests:
+    cpu: "100m"
+    memory: "128Mi"
+  limits:
+    cpu: "250m"
+    memory: "256Mi"
+
+secret:
+  name: 2048-backend-secrets
+  anthropicKeyRef: anthropic-api-key
+
+probes:
+  path: /healthy
+  initialDelaySeconds: 10
+  periodSeconds: 15
+
+route:
+  enabled: true
+  host: ""
+  tls: true
+
+pdb:
+  enabled: false
+  minAvailable: 2

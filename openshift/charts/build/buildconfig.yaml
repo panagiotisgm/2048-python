@@ -1,0 +1,47 @@
+# ── openshift/charts/build/buildconfig.yaml ───────────────────────────────────
+# S2I BuildConfig — triggered by pipeline or GitLab webhook.
+# Builds image from source, pushes to ImageStream :latest.
+# Pipeline promotes :latest → :dev-stable after a healthy dev rollout.
+# ──────────────────────────────────────────────────────────────────────────────
+
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  name: 2048-python
+  namespace: 2048-dev
+  labels:
+    app: 2048-python
+    team: platform
+spec:
+  source:
+    type: Git
+    git:
+      uri: "https://github.com/panagiotisgm/2048-python.git"
+      ref: main
+    # S2I detects requirements.txt automatically — no Dockerfile needed
+
+  strategy:
+    type: Source
+    sourceStrategy:
+      from:
+        kind: ImageStreamTag
+        namespace: openshift        # shared builder images live here
+        name: "python:3.12-ubi9"
+      env:
+        - name: PIP_INDEX_URL
+          value: "https://artifactory.example.com/artifactory/api/pypi/pypi/simple"
+
+  output:
+    to:
+      kind: ImageStreamTag
+      name: "2048-backend:latest"   # pipeline promotes to :dev-stable after deploy
+
+  triggers:
+    - type: ImageChange              # rebuild when base Python image gets a CVE patch
+      imageChange: {}
+    - type: GitLab
+      gitlab:
+        secretReference:
+          name: 2048-backend-webhook-secret   # stored as OCP Secret, never hardcoded
+
+  runPolicy: Serial                  # queue concurrent builds, no race on :latest

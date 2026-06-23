@@ -1,0 +1,57 @@
+# ── openshift/charts/deploy/templates/service.yaml ────────────────────────────
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "common.labels" . | nindent 4 }}
+spec:
+  selector:
+    {{- include "common.selectorLabels" . | nindent 4 }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.targetPort }}
+
+---
+# ── openshift/charts/deploy/templates/route.yaml ──────────────────────────────
+# OpenShift Route — only rendered when route.enabled: true
+{{- if .Values.route.enabled }}
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "common.labels" . | nindent 4 }}
+spec:
+  host: {{ .Values.route.host }}
+  to:
+    kind: Service
+    name: {{ .Release.Name }}
+  port:
+    targetPort: {{ .Values.service.targetPort }}
+  {{- if .Values.route.tls }}
+  tls:
+    termination: edge
+  {{- end }}
+{{- end }}
+
+---
+# ── openshift/charts/deploy/templates/pdb.yaml ────────────────────────────────
+# PodDisruptionBudget — only rendered in prod (pdb.enabled: true in values-prod.yaml)
+{{- if .Values.pdb.enabled }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ .Release.Name }}-pdb
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "common.labels" . | nindent 4 }}
+spec:
+  minAvailable: {{ .Values.pdb.minAvailable }}
+  selector:
+    matchLabels:
+      {{- include "common.selectorLabels" . | nindent 6 }}
+{{- end }}

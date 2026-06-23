@@ -1,0 +1,17 @@
+# ── openshift/charts/deploy/values-preprod.yaml ───────────────────────────────
+# Preprod — 2 replicas for HA, mirrors prod sizing
+# ImageStream stable tag used: :preprod-stable
+# ──────────────────────────────────────────────────────────────────────────────
+
+replicaCount: 2
+
+resources:
+  requests:
+    cpu: "250m"
+    memory: "256Mi"
+  limits:
+    cpu: "500m"
+    memory: "512Mi"
+
+route:
+  host: 2048-preprod.example.com

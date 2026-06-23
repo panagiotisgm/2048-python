@@ -1,0 +1,17 @@
+# ── openshift/charts/deploy/values-dev.yaml ───────────────────────────────────
+# Dev — 1 replica, low resources, image tag = commit SHA (set by pipeline)
+# ImageStream stable tag used: :dev-stable
+# ──────────────────────────────────────────────────────────────────────────────
+
+replicaCount: 1
+
+resources:
+  requests:
+    cpu: "100m"
+    memory: "128Mi"
+  limits:
+    cpu: "250m"
+    memory: "256Mi"
+
+route:
+  host: 2048-dev.example.com

@@ -1,0 +1,5 @@
+fastapi
+uvicorn==0.34.0
+httpx
+pydantic==2.13.4
+python-dotenv
